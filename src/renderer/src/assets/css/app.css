@@ -1,0 +1,10 @@
+@import './tailwind.css';
+@import './transitions.css';
+
+html {
+    @apply bg-transparent;
+}
+
+html, body, #app {
+    @apply min-h-screen;
+}
