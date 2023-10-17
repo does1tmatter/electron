@@ -27,25 +27,25 @@ export default () => {
   }
 
   const fetchNotes = async () => {
-    const notes = []
-    if (!(await invoke('exists', `.${notesDir}`))) {
-      await invoke('mkDir', `.${notesDir}`)
+    if (!(await invoke('exists', `.${notesDir}/`))) {
+      await invoke('mkDir', `.${notesDir}/`)
+      return null
     } else {
-      const dir = await invoke('readDir', `.${notesDir}`)
-
+      let notes = []
       dir.forEach(async (date) => {
+        console.log('here', notes)
         const dateDir = await invoke('readDir', `.${notesDir}/${date}/`)
-
+        console.log(dateDir)
         dateDir.forEach(async (file) => {
+          console.log('fetch notes fired')
           if (file) {
             const data = await invoke('readFile', `.${notesDir}/${date}/${file}`)
             notes.push(data)
           }
         })
       })
+      return notes
     }
-
-    return notes
   }
 
   const fetchNote = async (filePath) => {

@@ -1,13 +1,5 @@
 <script setup>
-import { computed, onMounted } from 'vue'
 import TitleBar from '@renderer/components/TitleBar.vue'
-import useNotes from '@renderer/composables/useNotes'
-
-const { readNotes, notes } = useNotes()
-
-onMounted(async () => {
-  await readNotes()
-})
 </script>
 
 <template>

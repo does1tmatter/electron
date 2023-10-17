@@ -14,7 +14,10 @@ export default () => {
     execute: readNotes
   } = useAsyncState(() => fetchNotes(), [], {
     immediate: false,
-    resetOnExecute: false
+    resetOnExecute: false,
+    onSuccess: (data) => {
+      console.debug('onSuccess', data)
+    }
   })
 
   const {

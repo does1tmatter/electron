@@ -1,22 +1,37 @@
 <script setup>
 import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import useNotes from '@renderer/composables/useNotes'
-import { useTextareaAutosize, useEventBus } from '@vueuse/core'
+import { useNotes, useElectron} from '@renderer/composables'
+import { useTextareaAutosize, useEventBus, useAsyncState } from '@vueuse/core'
 import { getDate } from '@utils'
 
-const { notes, readNotes } = useNotes()
 const { textarea, input } = useTextareaAutosize()
 const { on: onAppEvent } = useEventBus('app')
 const route = useRoute()
 
 const currentNote = ref({})
 
+const { fetchNotes } = useElectron()
+
+const {
+  state: notes,
+  isLoading: isNotesLoading,
+  execute: readNotes
+} = useAsyncState(async () => {
+  const data = await fetchNotes()
+  console.log('data', data)
+  return data
+}, [], {
+  immediate: false,
+  resetOnExecute: false,
+  onSuccess: (data) => {
+    console.debug('onSuccess', data)
+  }
+})
+
 await readNotes()
 if (route.params?.date && route.params?.id) {
   currentNote.value = notes.value.find(n => n.filePath === `/notes/${route.params.date}/${route.params.id}`)
-  console.log(`/notes/${route.params.date}/${route.params.id}`)
-  console.log(notes.value.find(n => n.filePath === `/notes/${route.params.date}/${route.params.id}`))
 } else {
   currentNote.value = notes.value[0]
 
