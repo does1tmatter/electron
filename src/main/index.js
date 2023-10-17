@@ -1,30 +1,19 @@
-import { app, shell, BrowserWindow } from 'electron'
+import { app, shell, BrowserWindow, screen } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
-import icon from '../../resources/icon.png?asset'
-import { registerEventHandlers } from './ipcEvents'
+import { registerEventHandlers } from '@main/handlers'
+import noteSettings from '@main/noteSettings'
 
 let loadWindow
 function createWindow() {
+  const primaryDisplay = screen.getPrimaryDisplay()
+  const { width, height } = primaryDisplay.workAreaSize
   // Create the browser window.
+  // prettier-ignore
   const mainWindow = new BrowserWindow({
-    width: 380,
-    height: 450,
-    minWidth: 200,
-    x: 2145,
-    y: 345,
-    show: false,
-    frame: false,
-    transparent: true,
-    autoHideMenuBar: true,
-    titleBarStyle: 'hidden',
-    ...(process.platform === 'linux' ? { icon } : {}),
-    webPreferences: {
-      preload: join(__dirname, '../preload/index.js'),
-      experimentalFeatures: true,
-      scrollBounce: process.platform === 'darwin',
-      sandbox: false
-    }
+    ...noteSettings,
+    x: width - 500,
+    y: height - ((height * 10) / 100)
   })
 
   registerEventHandlers()

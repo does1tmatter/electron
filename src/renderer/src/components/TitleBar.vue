@@ -6,7 +6,7 @@ import useNotes from '@renderer/composables/useNotes'
 import useElectron from '@renderer/composables/useElectron'
 
 const { invoke } = useElectron()
-const { saveNote } = useNotes()
+const { saveNote, newWindow } = useNotes()
 
 const isNotMac = ref(import.meta.env.platform !== 'darwin')
 const IsWeb = ref(import.meta.env.BUILD_TARGET)
@@ -15,8 +15,9 @@ const onMinimize = () => invoke('windowMini')
 const onClose = () => invoke('windowClose')
 
 const onSave = async () => {
-  const data = 'bobr kurwa ky bydle'
-  saveNote(getDate(), data)
+  // const data = 'bobr kurwa ky bydle'
+  // saveNote(getDate(), data)
+  newWindow()
 }
 </script>
 
