@@ -1,22 +1,41 @@
-import { storeToRefs } from 'pinia'
-import { useNotesStore } from '@renderer/store/notes'
-import useElectron from '@renderer/composables/useElectron'
+import { computed } from 'vue'
+import { useAsyncState } from '@vueuse/core'
+import { useElectron } from '@renderer/composables'
+import { getDate } from '@utils'
 
 export default () => {
-  const notesStore = useNotesStore()
-  const { saveNote, readNotes } = useNotesStore()
-  const { notesCount, notes } = storeToRefs(notesStore)
-  const { invoke } = useElectron()
+  const { fetchNote, fetchNotes, postNote } = useElectron()
 
-  const newWindow = () => {
-    invoke('newWindow')
-  }
+  const saveNote = async (date = getDate(), note = '') => await postNote(date, note)
+
+  const {
+    state: notes,
+    isLoading: isNotesLoading,
+    execute: readNotes
+  } = useAsyncState(() => fetchNotes(), [], {
+    immediate: false,
+    resetOnExecute: false
+  })
+
+  const {
+    state: note,
+    isLoading: isNoteLoading,
+    execute: readNote
+  } = useAsyncState((path) => fetchNote(path), [], {
+    immediate: false,
+    resetOnExecute: false
+  })
+
+  const noteCount = computed(() => notes.value.length)
 
   return {
     notes,
-    notesCount,
-    saveNote,
+    noteCount,
+    isNotesLoading,
     readNotes,
-    newWindow
+    note,
+    isNoteLoading,
+    readNote,
+    saveNote
   }
 }

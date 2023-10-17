@@ -1,12 +1,13 @@
 <script setup>
 import { ref } from 'vue'
-import getDate from '@renderer/utils/getDate'
+import { getDate } from '@utils'
+import { useElectron, useNotes } from '@renderer/composables'
 import TitleIcon from '@renderer/components/TitleIcon.vue'
-import useNotes from '@renderer/composables/useNotes'
-import useElectron from '@renderer/composables/useElectron'
+import { useEventBus } from '@vueuse/core'
 
-const { invoke } = useElectron()
-const { saveNote, newWindow } = useNotes()
+const { saveNote } = useNotes()
+const { invoke, newWindow } = useElectron()
+const { emit } = useEventBus('app')
 
 const isNotMac = ref(import.meta.env.platform !== 'darwin')
 const IsWeb = ref(import.meta.env.BUILD_TARGET)
@@ -14,10 +15,14 @@ const IsWeb = ref(import.meta.env.BUILD_TARGET)
 const onMinimize = () => invoke('windowMini')
 const onClose = () => invoke('windowClose')
 
-const onSave = async () => {
-  // const data = 'bobr kurwa ky bydle'
-  // saveNote(getDate(), data)
-  newWindow()
+const onNewNote = async () => {
+  try {
+    const notePath = await saveNote(getDate(), 'New note')
+    emit('read-notes')
+    newWindow(notePath)
+  } catch (error) {
+    console.debug('error', error)
+  }
 }
 </script>
 
@@ -26,7 +31,7 @@ const onSave = async () => {
     <div class="flex">
       <div class="w-full min-h-full titlebar" />
       <div class="flex gap-2 items-center justify-end w-full">
-        <TitleIcon icon="ri:chat-new-line" @click="onSave" />
+        <TitleIcon icon="ri:chat-new-line" @click="onNewNote" />
         <TitleIcon icon="solar:minimize-square-3-outline" @click="onMinimize" />
         <TitleIcon icon="material-symbols:tab-close-outline" @click="onClose" />
       </div>

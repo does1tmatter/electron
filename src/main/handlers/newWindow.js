@@ -4,7 +4,7 @@ import noteSettings from '@main/noteSettings'
 import { defaultNoteWidth, defaultNoteHeight } from '@main/constants'
 import { getRandom } from '@utils'
 
-export default (event) => {
+export default (event, path = '/') => {
   const primaryDisplay = screen.getPrimaryDisplay()
   const { width, height } = primaryDisplay.workAreaSize
   const position = {
@@ -31,7 +31,8 @@ export default (event) => {
   })
 
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-    win.loadURL(process.env['ELECTRON_RENDERER_URL'])
+    console.log(process.env['ELECTRON_RENDERER_URL'] + '/#' + path)
+    win.loadURL(process.env['ELECTRON_RENDERER_URL'] + '/#' + path)
   } else {
     win.loadFile(join(__dirname, '../renderer/index.html'))
   }

@@ -1,24 +1,42 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { useTextareaAutosize } from '@vueuse/core'
-
 import useNotes from '@renderer/composables/useNotes'
+import { useTextareaAutosize, useEventBus } from '@vueuse/core'
+import { getDate } from '@utils'
 
-const { notes } = useNotes()
+const { notes, readNotes } = useNotes()
 const { textarea, input } = useTextareaAutosize()
+const { on: onAppEvent } = useEventBus('app')
 const route = useRoute()
 
-const currentNote = ref(notes.value?.[0] ?? { filename: 'lox', note: '' })
+const currentNote = ref({})
 
-const edit = ref(false)
-const onEdit = () => {
-  edit.value = !edit.value
+await readNotes()
+if (route.params?.date && route.params?.id) {
+  currentNote.value = notes.value.find(n => n.filePath === `/notes/${route.params.date}/${route.params.id}`)
+  console.log(`/notes/${route.params.date}/${route.params.id}`)
+  console.log(notes.value.find(n => n.filePath === `/notes/${route.params.date}/${route.params.id}`))
+} else {
+  currentNote.value = notes.value[0]
+
+  if (!notes.value.length) {
+    currentNote.value = { filePath: `/notes/${getDate()}/1`, note: 'Note view' }
+  }
 }
 
-input.value = currentNote.value.note ?? null
-const message =
-  'Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit, est aliquam ducimus voluptatem maiores eos molestiae doloremque iure itaque, amet hic! Beatae velit tempora ipsa saepe. Doloribus excepturi qui sapiente!'
+input.value = currentNote.value?.note
+watch(input, (value) => {
+  currentNote.value.note = value
+})
+
+onAppEvent(async event => await ({
+  'read-notes': readNotes
+})[event]?.())
+
+console.debug('route params', route.params)
+console.debug('current note', currentNote.value)
+console.debug('all notes', notes.value)
 </script>
 
 <template>
@@ -27,11 +45,10 @@ const message =
       ref="textarea"
       v-model="input"
       class="tracking-wide w-full autofocus font-thin bg-transparent text-left focus:outline-none scrollbar resize-none pr-4 text-justify resize-none"
-      :placeholder="message"
-      :class="{ 'select-none': edit }"
+      :placeholder="currentNote?.note ?? 'Note not found'"
     />
     <div class="text-right opacity-30 font-extralight tracking-wide text-xs">
-      {{ currentNote.filename }}
+      {{ currentNote?.filePath }}
     </div>
   </div>
 </template>

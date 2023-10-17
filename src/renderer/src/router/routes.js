@@ -6,10 +6,10 @@ const routes = [
   {
     path: '/',
     name: 'Home',
-    component: () => import('@renderer/views/Home.vue')
+    component: () => import('@renderer/views/Note.vue')
   },
   {
-    path: '/notes/:id',
+    path: '/notes/:date/:id',
     name: 'Note',
     component: () => import('@renderer/views/Note.vue')
   }
