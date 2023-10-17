@@ -22,5 +22,5 @@ const registerEventHandlers = () =>
     ipcMain.handle(ipcChannelName, ipcListener)
   })
 
-export { registerEventHandlers }
+export { registerEventHandlers, newWindow }
 export default eventHandlers

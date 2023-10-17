@@ -3,17 +3,17 @@ import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import { registerEventHandlers } from '@main/handlers'
 import noteSettings from '@main/noteSettings'
+import trayInit from '@main/tray'
 
 let loadWindow
 function createWindow() {
   const primaryDisplay = screen.getPrimaryDisplay()
   const { width, height } = primaryDisplay.workAreaSize
   // Create the browser window.
-  // prettier-ignore
   const mainWindow = new BrowserWindow({
     ...noteSettings,
     x: width - 500,
-    y: height - ((height * 10) / 100)
+    y: Math.round((height * 10) / 100)
   })
 
   registerEventHandlers()
@@ -56,6 +56,7 @@ app.whenReady().then(() => {
     loadWindow.loadFile(join(__dirname, '../renderer/loader.html'))
   }
 
+  trayInit()
   loadWindow.show()
   loadWindow.setAlwaysOnTop(true)
 

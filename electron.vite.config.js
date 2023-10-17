@@ -6,7 +6,8 @@ export default defineConfig({
   main: {
     resolve: {
       alias: {
-        '@main': resolve('src/main')
+        '@main': resolve('src/main'),
+        '@utils': resolve('src/utils')
       }
     },
     plugins: [externalizeDepsPlugin()]
@@ -17,7 +18,8 @@ export default defineConfig({
   renderer: {
     resolve: {
       alias: {
-        '@renderer': resolve('src/renderer/src')
+        '@renderer': resolve('src/renderer/src'),
+        '@utils': resolve('src/utils')
       }
     },
     plugins: [vue()]

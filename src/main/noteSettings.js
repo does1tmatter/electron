@@ -1,9 +1,10 @@
 import { join } from 'path'
 import icon from '../../resources/icon.png?asset'
+import { defaultNoteWidth, defaultNoteHeight } from '@main/constants'
 
 export default {
-  width: 380,
-  height: 450,
+  width: defaultNoteWidth,
+  height: defaultNoteHeight,
   minWidth: 200,
   show: false,
   frame: false,
