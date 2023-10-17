@@ -33,10 +33,8 @@ await readNotes()
 if (route.params?.date && route.params?.id) {
   currentNote.value = notes.value.find(n => n.filePath === `/notes/${route.params.date}/${route.params.id}`)
 } else {
-  currentNote.value = notes.value[0]
-
-  if (!notes.value.length) {
-    currentNote.value = { filePath: `/notes/${getDate()}/1`, note: 'Note view' }
+  if (notes.value.length) {
+    currentNote.value = notes.value[0]
   }
 }
 
@@ -60,10 +58,10 @@ console.debug('all notes', notes.value)
       ref="textarea"
       v-model="input"
       class="tracking-wide w-full autofocus font-thin bg-transparent text-left focus:outline-none scrollbar resize-none pr-4 text-justify resize-none"
-      :placeholder="currentNote?.note ?? 'Note not found'"
+      :placeholder="currentNote?.note ?? 'Empty note'"
     />
     <div class="text-right opacity-30 font-extralight tracking-wide text-xs">
-      {{ currentNote?.filePath }}
+      {{ currentNote?.filePath ?? 'unsaved' }}
     </div>
   </div>
 </template>
