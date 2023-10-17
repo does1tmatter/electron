@@ -13,8 +13,9 @@ const isNotMac = ref(import.meta.env.platform !== 'darwin')
 const IsWeb = ref(import.meta.env.BUILD_TARGET)
 
 const onMinimize = () => invoke('windowMini')
-const onClose = () => invoke('windowClose')
-
+const onClose = () => invoke('appClose')
+import { useRouter } from 'vue-router'
+const router = useRouter();
 const onNewNote = async () => {
   try {
     const notePath = await saveNote(getDate(), 'New note')

@@ -3,6 +3,7 @@ import { is } from '@electron-toolkit/utils'
 import noteSettings from '@main/noteSettings'
 import { defaultNoteWidth, defaultNoteHeight } from '@main/constants'
 import { getRandom } from '@utils'
+import { join } from 'node:path'
 
 export default (event, path = '/') => {
   const primaryDisplay = screen.getPrimaryDisplay()
@@ -24,6 +25,7 @@ export default (event, path = '/') => {
 
   win.on('ready-to-show', () => {
     win.show()
+    win.webContents.openDevTools()
   })
 
   win.on('close', function () {
@@ -31,9 +33,8 @@ export default (event, path = '/') => {
   })
 
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-    console.log(process.env['ELECTRON_RENDERER_URL'] + '/#' + path)
     win.loadURL(process.env['ELECTRON_RENDERER_URL'] + '/#' + path)
   } else {
-    win.loadFile(join(__dirname, '../renderer/index.html'))
+    win.loadFile(join(__dirname, '../renderer/index.html'), { hash: path })
   }
 }

@@ -4,6 +4,7 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import { registerEventHandlers } from '@main/handlers'
 import noteSettings from '@main/noteSettings'
 import trayInit from '@main/tray'
+import { newWindow } from '@main/handlers'
 
 let loadWindow
 function createWindow() {
@@ -23,7 +24,24 @@ function createWindow() {
   })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
-    shell.openExternal(details.url)
+    // shell.openExternal(details.url)
+    // newWindow(details.url, query)
+    const { url } = details
+    console.log({ url })
+    if (url.startsWith('dynamic://page')) {
+      // Parse parameters from the URL
+      const urlParams = new URL(url)
+      const date = urlParams.searchParams.get('date')
+      const id = urlParams.searchParams.get('id')
+
+      // Construct the dynamic URL
+      const dynamicURL = `/notes/${date}/${id}`
+      console.log({ dynamicURL })
+      // Create a new BrowserWindow for the dynamic URL
+      newWindow(dynamicURL)
+
+      return { action: 'allow', overrideBrowserWindow: true }
+    }
     return { action: 'deny' }
   })
 
