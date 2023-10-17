@@ -5,30 +5,21 @@ import { defaultNoteWidth, defaultNoteHeight } from '@main/constants'
 import { getRandom } from '@utils'
 
 export default (event) => {
-  let x = 0
-  let y = 0
-  if (event?.sender) {
-    const parentWindow = BrowserWindow.fromWebContents(event.sender)
-    ;[x, y] = parentWindow.getPosition()
-    x += defaultNoteWidth + 60
-    y += Math.round(defaultNoteHeight / 6)
-    const primaryDisplay = screen.getPrimaryDisplay()
-    const { width, height } = primaryDisplay.workAreaSize
-    if (x + defaultNoteWidth > width || y + defaultNoteHeight > height) {
-      x = 100
-      y = getRandom(30, height / 4)
-    }
-  } else {
-    const primaryDisplay = screen.getPrimaryDisplay()
-    const { width, height } = primaryDisplay.workAreaSize
-    x = width - 500
-    y = Math.round((height * 10) / 100)
+  const primaryDisplay = screen.getPrimaryDisplay()
+  const { width, height } = primaryDisplay.workAreaSize
+  const position = {
+    x: getRandom(100, width - defaultNoteWidth - 100),
+    y: getRandom(30, height / 4)
+  }
+
+  if (position.x + defaultNoteWidth > width || position.y + defaultNoteHeight > height) {
+    position.x = getRandom(100, width / 6)
+    position.y = getRandom(30, height / 4)
   }
 
   let win = new BrowserWindow({
     ...noteSettings,
-    x,
-    y
+    ...position
   })
 
   win.on('ready-to-show', () => {
