@@ -39,7 +39,7 @@ console.debug('all notes', notes.value)
     <textarea
       ref="textarea"
       v-model="input"
-      class="tracking-wide w-full autofocus font-thin bg-transparent text-left focus:outline-none scrollbar resize-none pr-4 text-justify resize-none"
+      class="tracking-wide w-full autofocus font-thin bg-transparent focus:outline-none scrollbar resize-none pr-4 text-justify"
       :placeholder="currentNote?.note ?? 'Empty note'"
     />
     <div class="text-right opacity-30 font-extralight tracking-wide text-xs">
